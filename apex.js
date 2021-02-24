@@ -1,41 +1,36 @@
-Promise.all([
-  loadData(
-    "https://s3.eu-central-1.amazonaws.com/fusion.store/ft/data/plotting-multiple-series-on-time-axis-data.json"
-  ),
-  loadData(
-    "https://s3.eu-central-1.amazonaws.com/fusion.store/ft/schema/plotting-multiple-series-on-time-axis-schema.json"
-  )
-]).then(function(res) {
-  const data = res[0];
-  const schema = res[1];
+var options = {
+  chart: {
+      height: 380,
+      type: 'line',
+      events: {
+          dataPointSelection: function(e, chart, opts) {
+              console.log(e, opts)
+          },
+      },
+  },
+  series: [{
+      name: "Desktops",
+      data: [30, 41, 35, 51, 49, 62, 69, 91, 126]
+  }],
+  grid: {
+      row: {
+          colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+          opacity: 0.5
+      },
+  },
+  xaxis: {
+      categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
+  },
+  tooltip: {
+      intersect: true,
+      shared: false
+  },
+  markers: {
+    size: 6,
+  }
+}
 
-  const dataStore = new FusionCharts.DataStore();
-  const dataSource = {
-    chart: {},
-    caption: {
-      text: "Sales Analysis"
-    },
-    subcaption: {
-      text: "Grocery & Footwear"
-    },
-    series: "Type",
-    yaxis: [
-      {
-        plot: "Sales Value",
-        title: "Sale Value",
-        format: {
-          prefix: "$"
-        }
-      }
-    ]
-  };
-  dataSource.data = dataStore.createDataTable(data, schema);
+var chart = new ApexCharts(document.querySelector("#chart"), options);
 
-  new FusionCharts({
-    type: "timeseries",
-    renderAt: "chart-container",
-    width: "100%",
-    height: "500",
-    dataSource: dataSource
-  }).render();
-});
+chart.render();
+
